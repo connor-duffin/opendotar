@@ -23,9 +23,7 @@ get_player_matches <- function(account_id, output_file, recent = FALSE) {
 }
 
 get_single_match <- function(match_id, output_file) {
-    # TODO: expand to other match data: very barebones at the moment
     if (!is.character(match_id)) {
-        print("coercing input match_id into a character")
         match_id <- as.character(match_id)
     }
     base_url <- paste(OPENDOTA_URL, "matches/match_id", sep = "")
@@ -36,10 +34,12 @@ get_single_match <- function(match_id, output_file) {
             dat$players,
             function(row) {
                 row[c("account_id", "kills", "deaths", "assists",
-                    "gold_per_min", "xp_per_min", "win")]
+                      "net_worth", "gold_per_min", "xp_per_min", "win",
+                      "last_hits", "denies")]
             })
         
     )
+    dat_df$match_id <- match_id
     write.csv(dat_df, file = output_file, row.names = FALSE)
     output_file
 }
