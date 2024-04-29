@@ -1,12 +1,13 @@
 library(purrr)
 library(rjson)
 
-# TODO: move base_url abstraction outside of functions
+OPENDOTA_URL <- "https://api.opendota.com/api/"
+
 get_player_matches <- function(account_id, output_file, recent = FALSE) {
     if (recent) {
-        base_url <- "https://api.opendota.com/api/players/acc_id/recentMatches"
+        base_url <- paste(OPENDOTA_URL, "players/acc_id/recentMatches", sep = "")
     } else {
-        base_url <- "https://api.opendota.com/api/players/acc_id/matches"
+        base_url <- paste(OPENDOTA_URL, "players/acc_id/matches", sep = "")
     }
 
     dat <- rjson::fromJSON(file = gsub("acc_id", account_id, base_url))
@@ -27,7 +28,7 @@ get_single_match <- function(match_id, output_file) {
         print("coercing input match_id into a character")
         match_id <- as.character(match_id)
     }
-    base_url <- "https://api.opendota.com/api/matches/match_id"
+    base_url <- paste(OPENDOTA_URL, "matches/match_id", sep = "")
     dat <- rjson::fromJSON(file = gsub("match_id", match_id, base_url))
     dat_df <- do.call(
         rbind.data.frame,
@@ -44,7 +45,7 @@ get_single_match <- function(match_id, output_file) {
 }
 
 get_player_heroes <- function(account_id, output_file) {
-    base_url <- "https://api.opendota.com/api/players/acc_id/heroes"
+    base_url <- paste(OPENDOTA_URL, "players/acc_id/heroes", sep = "")
     dat <- rjson::fromJSON(file = gsub("acc_id", account_id, base_url))
     dat_df <- do.call(rbind.data.frame, dat)
     dat_df$date <- Sys.Date()
@@ -53,11 +54,9 @@ get_player_heroes <- function(account_id, output_file) {
 }
 
 get_mmr_data <- function(output_file) {
-    dat <- rjson::fromJSON(file = "https://api.opendota.com/api/distributions") 
+    dat <- rjson::fromJSON(file = paste(OPENDOTA_URL, "distributions", sep = ""))
     dat_df <- do.call(rbind.data.frame, dat$ranks$rows)
     dat_df$date <- Sys.Date()
     write.csv(dat_df, file = output_file, row.names = FALSE)
     output_file
 }
-
-
