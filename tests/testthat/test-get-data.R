@@ -31,8 +31,8 @@ test_that("get_player_data reads in recent matches from OpenDotA", {
     expect_true(sum(out$win) / nrow(out) <= 1.)
 })
 
-test_that("get_single_match reads in match data", {
-    out <- get_single_match(7704581651)
+test_that("get_single_match_player reads in match data", {
+    out <- get_single_match_player(7704581651)
 
     expect_in(c("account_id", "kills", "deaths", "assists", "net_worth",
                 "gold_per_min", "xp_per_min", "win", "last_hits", "denies",
@@ -46,6 +46,12 @@ test_that("get_single_match reads in match data", {
     expect_equal(out$last_hits, c(58, 90, 277, 276, 388, 65, 77, 371))
     expect_true(all(out$match_id == 7704581651))
 })
+
+test_that("get_single_match reads in data OK", {
+  out <- get_single_match(7704581651)
+  browser()
+})
+
 
 test_that("get_player_heroes reads in a players hero pool", {
     out <- get_player_heroes(86745912)
